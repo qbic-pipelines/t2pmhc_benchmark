@@ -3,7 +3,7 @@ process PREDICT_T2PMHC_GAT {
     label 'process_medium'
 
     publishDir "${params.outdir}/binding_prediction/${meta.dataset}", mode: 'copy',
-                saveAs: { filename -> "${meta.dataset}/${filename}" }
+                saveAs: { filename -> "${filename}" }
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

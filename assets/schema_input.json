@@ -7,27 +7,33 @@
     "items": {
         "type": "object",
         "properties": {
-            "sample": {
+            "model_name": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Sample name must be provided and cannot contain spaces",
+                "errorMessage": "Model name must be provided and cannot contain spaces",
                 "meta": ["id"]
             },
-            "fastq_1": {
+            "dataset_name": {
                 "type": "string",
-                "format": "file-path",
-                "exists": true,
-                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+                "pattern": "^\\S+$",
+                "errorMessage": "Dataset name must be provided and cannot contain spaces",
+                "meta": ["dataset"]
             },
-            "fastq_2": {
+            "model_samplesheet": {
                 "type": "string",
                 "format": "file-path",
                 "exists": true,
-                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+                "pattern": "^\\S+\\.(csv|tsv)$",
+                "errorMessage": "Model samplesheet, cannot contain spaces and must have extension '.csv' or '.tsv'"
+            },
+            "dataset_graphs": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.pt$",
+                "errorMessage": "Dataset graphs, cannot contain spaces and must have extension 'pt'"
             }
         },
-        "required": ["sample", "fastq_1"]
+        "required": ["model_name", "dataset_name", "model_samplesheet"]
     }
 }

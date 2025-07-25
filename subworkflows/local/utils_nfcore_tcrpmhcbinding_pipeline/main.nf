@@ -67,24 +67,14 @@ workflow PIPELINE_INITIALISATION {
     // Create channel from input file provided through params.input
     //
 
+    // Channel
+    //     .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
+    //     .map {
+    //         meta, samplesheet, graphs ->
+    //             [meta, [samplesheet, graphs]]}
+    //     .set { ch_samplesheet }
     Channel
         .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
-        .map {
-            meta, fastq_1, fastq_2 ->
-                if (!fastq_2) {
-                    return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
-                } else {
-                    return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
-                }
-        }
-        .groupTuple()
-        .map { samplesheet ->
-            validateInputSamplesheet(samplesheet)
-        }
-        .map {
-            meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
-        }
         .set { ch_samplesheet }
 
     emit:
@@ -149,6 +139,7 @@ workflow PIPELINE_COMPLETION {
 //
 // Validate channels from input samplesheet
 //
+// TODO: WRITE THIS FUNCTION FOR MY USECASE
 def validateInputSamplesheet(input) {
     def (metas, fastqs) = input[1..2]
 

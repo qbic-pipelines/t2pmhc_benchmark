@@ -3,10 +3,11 @@
  */
 
 // include { THERMORAWFILEPARSER    } from '../../../modules/nf-core/thermorawfileparser/main'
-include { PREDICT_T2PMHC_GCN } from '../../../modules/local/predict_t2pmhc_gcn'
-include { PREDICT_T2PMHC_GAT } from '../../../modules/local/predict_t2pmhc_gat'
-include { PREDICT_MIXTCRPRED } from '../../../modules/local/predict_mixtcrpred'
-include { COMBINE_MIXTCRPRED } from '../../../modules/local/combine_mixtcrpred'
+include { PREDICT_T2PMHC_GCN } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
+include { PREDICT_T2PMHC_GAT } from '../../../modules/local/t2pmhc/predict_t2pmhc_gat'
+include { PREDICT_MIXTCRPRED } from '../../../modules/local/mixtcrpred/predict_mixtcrpred'
+include { COMBINE_MIXTCRPRED } from '../../../modules/local/mixtcrpred/combine_mixtcrpred'
+include { PREDICT_TABR_BERT } from '../../../modules/local/tabr-bert/predict_tabr_bert'
 
 
 workflow PREDICTION {
@@ -21,12 +22,9 @@ workflow PREDICTION {
                 gcn: meta.id == "gcn"
                 gat: meta.id == "gat"
                 mixtcrpred: meta.id == "mixtcrpred"
+                tabr_bert: meta.id == "tabr_bert"
             }
             .set { prediction_ch}
-
-        // prediction_ch.gcn.dump(tag:"gcn")
-        // prediction_ch.gat.dump(tag:"gat")
-
 
         
         // =========================================================
@@ -38,13 +36,13 @@ workflow PREDICTION {
         pae_full_gcn    = file("${projectDir}/bin/scalers/gcn_final_pae_node_FULL.pkl")
         pae_tpmhc_gcn   = file("${projectDir}/bin/scalers/gcn_final_pae_node_TCRPMHC.pkl")
         
-        // PREDICT_T2PMHC_GCN ( 
-        //     prediction_ch.gcn,
-        //     hyperparams_gcn,
-        //     model_gcn,
-        //     pae_full_gcn,
-        //     pae_tpmhc_gcn
-        // )
+        PREDICT_T2PMHC_GCN ( 
+            prediction_ch.gcn,
+            hyperparams_gcn,
+            model_gcn,
+            pae_full_gcn,
+            pae_tpmhc_gcn
+        )
 
         // =========================================================
         //          t2pmhc -- GAT
@@ -57,16 +55,16 @@ workflow PREDICTION {
         hydro_gat       = file("${projectDir}/bin/scalers/gat_gpu_hydro.pkl")
         distance_gat    = file("${projectDir}/bin/scalers/gat_gpu_distance.pkl")
 
-        // PREDICT_T2PMHC_GAT ( 
-        //     prediction_ch.gat,
-        //     hyperparams_gat,
-        //     model_gat,
-        //     pae_full_gat,
-        //     pae_tpmhc_gat,
-        //     pae_edge_gat,
-        //     hydro_gat,
-        //     distance_gat
-        // )
+        PREDICT_T2PMHC_GAT ( 
+            prediction_ch.gat,
+            hyperparams_gat,
+            model_gat,
+            pae_full_gat,
+            pae_tpmhc_gat,
+            pae_edge_gat,
+            hydro_gat,
+            distance_gat
+        )
 
         // =========================================================
         //          mixtcrpred
@@ -82,6 +80,16 @@ workflow PREDICTION {
 
         COMBINE_MIXTCRPRED (
             PREDICT_MIXTCRPRED.out.mixtcrpred_results
+        )
+
+        
+
+        // =========================================================
+        //          TABR-BERT
+        // =========================================================
+
+        PREDICT_TABR_BERT (
+            prediction_ch.tabr_bert
         )
 
     emit:

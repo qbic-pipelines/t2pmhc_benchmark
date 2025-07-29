@@ -38,7 +38,7 @@ def scale_test(dataset, mode, pae_node_scaler, pae_tcrpmhc_node_scaler, hydro_sc
     pae_node_scaler = load(pae_node_scaler)
     pae_tcrpmhc_node_scaler = load(pae_tcrpmhc_node_scaler)
 
-    if mode == "cmap":
+    if mode == "gcn":
         for graph in dataset:
             pae_val = np.array([[graph.meta["PAE"]]], dtype=np.float32)
             paetcrpmhc_val = np.array([[graph.meta["PAE_TCRpMHC"]]], dtype=np.float32)
@@ -149,7 +149,7 @@ def main():
 
         test_dataset, test_structures = gcn_create_graphs(pdb_files="", metadata=metadata, sample_size=np.inf, threshold=10, load_graphs=True, saved_graphs=args.graphs, store_graphs=False, name="", test_run=False, graphs_path="")
         # scale the test features
-        scale_test(test_dataset, "cmap", args.pae_scaler_structure, args.pae_scaler_tcrpmhc, "", "", "")
+        scale_test(test_dataset, "gcn", args.pae_scaler_structure, args.pae_scaler_tcrpmhc, "", "", "")
         # init model
         logging.info("Initialising Model")
         model = GCNClassifier(input_dim=input_dim, hidden_dim=hidden_dim, output_dim=output_dim, dropout_rate=dropout_rate)
@@ -189,5 +189,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

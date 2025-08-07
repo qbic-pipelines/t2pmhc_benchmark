@@ -2,7 +2,7 @@ process PREDICT_T2PMHC_GAT {
     tag "$meta.id"
     label 'process_medium'
 
-    publishDir "${params.outdir}/binding_prediction/${meta.dataset}", mode: 'copy',
+    publishDir "${params.outdir}/binding_prediction/predictions/${meta.dataset}", mode: 'copy',
                 saveAs: { filename -> "${filename}" }
 
     conda "${moduleDir}/environment.yml"

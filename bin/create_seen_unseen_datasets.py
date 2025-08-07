@@ -95,6 +95,8 @@ def main():
     parser.add_argument('--mixtcrpred_train', type=str, required=True, help="mixtcrpred train samplesheet")
     parser.add_argument('--tabr_train', type=str, required=True, help="tabr train samplesheet")
 
+    args = parser.parse_args()
+
     shared_seen = get_shared_peptides(["gcn", "mixtcrpred", "tabr_bert"], [t2pmhc, mixtcrpred, tabr_bert], True)
     shared_unseen = get_shared_peptides(["gcn", "mixtcrpred", "tabr_bert"], [t2pmhc, mixtcrpred, tabr_bert], False)
 

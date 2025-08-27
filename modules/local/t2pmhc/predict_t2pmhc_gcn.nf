@@ -1,6 +1,6 @@
 process PREDICT_T2PMHC_GCN {
     tag "$meta.id"
-    label 'process_single'
+    label 'process_medium'
 
     publishDir "${params.outdir}/binding_prediction/predictions/${meta.dataset}", mode: 'copy',
                 saveAs: { filename -> "${filename}" }
@@ -16,6 +16,8 @@ process PREDICT_T2PMHC_GCN {
     path(model)
     path(pae_scaler_full)
     path(pae_scaler_tcrpmhc)
+    path(hydro_scaler)
+    path(distance_scaler)
 
     output:
     tuple val(meta), path("${meta.id}_predicted.tsv")  , emit: gcn_pred
@@ -37,6 +39,8 @@ process PREDICT_T2PMHC_GCN {
         --model_path ${model} \\
         --pae_scaler_structure ${pae_scaler_full} \\
         --pae_scaler_tcrpmhc ${pae_scaler_tcrpmhc} \\
+        --hydro_scaler ${hydro_scaler} \\
+        --distance_scaler ${distance_scaler} \\
         --hyperparams ${hyperparams} \\
         ${args}
 

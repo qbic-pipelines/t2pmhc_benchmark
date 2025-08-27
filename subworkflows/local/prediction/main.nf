@@ -2,19 +2,24 @@
  * TODO Write short intro
  */
 
-include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GCN     } from '../../../modules/local/t2pmhc/create_graphs' 
-include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GCN_OTS } from '../../../modules/local/t2pmhc/create_graphs' 
-include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GAT     } from '../../../modules/local/t2pmhc/create_graphs' 
-include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_GRAPHS       } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
-include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_NOGRAPHS     } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
-include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_OTS_GRAPHS   } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
-include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_OTS_NOGRAPHS } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
-include { PREDICT_T2PMHC_GAT as PREDICT_T2PMHC_GAT_GRAPHS       } from '../../../modules/local/t2pmhc/predict_t2pmhc_gat'
-include { PREDICT_T2PMHC_GAT as PREDICT_T2PMHC_GAT_NOGRAPHS     } from '../../../modules/local/t2pmhc/predict_t2pmhc_gat'
-include { PREDICT_MIXTCRPRED    } from '../../../modules/local/mixtcrpred/predict_mixtcrpred'
-include { COMBINE_MIXTCRPRED    } from '../../../modules/local/mixtcrpred/combine_mixtcrpred'
-include { PREDICT_TABR_BERT     } from '../../../modules/local/tabr-bert/predict_tabr_bert'
-
+include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GCN             } from '../../../modules/local/t2pmhc/create_graphs' 
+include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GCN_OTS         } from '../../../modules/local/t2pmhc/create_graphs' 
+include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GCN_GLOBMEAN    } from '../../../modules/local/t2pmhc/create_graphs' 
+include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GAT             } from '../../../modules/local/t2pmhc/create_graphs' 
+include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_GRAPHS               } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
+include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_NOGRAPHS             } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
+include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_GLOBMEAN_GRAPHS      } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
+include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_GLOBMEAN_NOGRAPHS    } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
+include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_OTS_GRAPHS           } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
+include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_OTS_NOGRAPHS         } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
+include { PREDICT_T2PMHC_GAT as PREDICT_T2PMHC_GAT_GRAPHS               } from '../../../modules/local/t2pmhc/predict_t2pmhc_gat'
+include { PREDICT_T2PMHC_GAT as PREDICT_T2PMHC_GAT_NOGRAPHS             } from '../../../modules/local/t2pmhc/predict_t2pmhc_gat'
+include { PREDICT_MIXTCRPRED                                            } from '../../../modules/local/mixtcrpred/predict_mixtcrpred'
+include { COMBINE_MIXTCRPRED                                            } from '../../../modules/local/mixtcrpred/combine_mixtcrpred'
+include { PREDICT_TABR_BERT                                             } from '../../../modules/local/tabr-bert/predict_tabr_bert'
+include { CREATE_TCREN_DIRS                                             } from '../../../modules/local/tcren/create_tcren_dirs'
+include { PREPARE_TCREN                                                 } from '../../../modules/local/tcren/prepare_tcren'
+include { PREDICT_TCREN                                                 } from '../../../modules/local/tcren/predict_tcren'
 
 workflow PREDICTION {
     take:
@@ -28,8 +33,10 @@ workflow PREDICTION {
                 gcn: meta.id == "gcn"
                 gat: meta.id == "gat"
                 gcn_ots: meta.id == "gcn-ots"
+                gcn_globmean: meta.id == "gcn-globmean"
                 mixtcrpred: meta.id == "mixtcrpred"
                 tabr_bert: meta.id == "tabr-bert"
+                tcren: meta.id == "tcren"
             }
             .set { prediction_ch}
 
@@ -50,6 +57,8 @@ workflow PREDICTION {
         model_gcn       = file("${projectDir}/bin/models/gcn_final.pt")
         pae_full_gcn    = file("${projectDir}/bin/scalers/gcn_final_pae_node_FULL.pkl")
         pae_tpmhc_gcn   = file("${projectDir}/bin/scalers/gcn_final_pae_node_TCRPMHC.pkl")
+        hydro_gcn       = file("${projectDir}/bin/scalers/gcn_final_hydro.pkl")
+        distance_gcn    = file("${projectDir}/bin/scalers/gcn_final_distance.pkl")
 
         gcn_ch = prediction_ch.gcn
 
@@ -68,7 +77,9 @@ workflow PREDICTION {
             hyperparams_gcn,
             model_gcn,
             pae_full_gcn,
-            pae_tpmhc_gcn
+            pae_tpmhc_gcn,
+            hydro_gcn,
+            distance_gcn
         )
 
         // create graphs for those without
@@ -89,7 +100,65 @@ workflow PREDICTION {
             hyperparams_gcn,
             model_gcn,
             pae_full_gcn,
-            pae_tpmhc_gcn
+            pae_tpmhc_gcn,
+            hydro_gcn,
+            distance_gcn
+        )
+
+        // =========================================================
+        //          t2pmhc -- GCN GLOB MEAN
+        // =========================================================
+        // Reference the prediction files
+        hyperparams_gcn_globmean = file("${projectDir}/bin/hyperparams/hyperparams_final_gcn.json")
+        model_gcn_globmean       = file("${projectDir}/bin/models/gcn_final_globmean.pt")
+        pae_full_gcn_globmean    = file("${projectDir}/bin/scalers/gcn_final_globmean_pae_node_FULL.pkl")
+        pae_tpmhc_gcn_globmean   = file("${projectDir}/bin/scalers/gcn_final_globmean_pae_node_TCRPMHC.pkl")
+        hydro_gcn_globmean       = file("${projectDir}/bin/scalers/gcn_final_globmean_hydro.pkl")
+        distance_gcn_globmean    = file("${projectDir}/bin/scalers/gcn_final_globmean_distance.pkl")
+
+        gcn_globmean_ch = prediction_ch.gcn_globmean
+
+        
+        gcn_globmean_ch.branch {
+            meta, samplesheet, graphs ->
+                with_graphs: !graphs.isEmpty()
+                no_graphs: graphs.isEmpty()
+        }
+        .set { gcn_globmean_graph_ch }
+
+
+        // predict those where graphs are already present
+        PREDICT_T2PMHC_GCN_GLOBMEAN_NOGRAPHS (
+            gcn_globmean_graph_ch.with_graphs,
+            hyperparams_gcn_globmean,
+            model_gcn_globmean,
+            pae_full_gcn_globmean,
+            pae_tpmhc_gcn_globmean,
+            hydro_gcn_globmean,
+            distance_gcn_globmean
+        )
+
+        // create graphs for those without
+        CREATE_T2PMHC_GRAPHS_GCN_GLOBMEAN(
+            gcn_globmean_graph_ch.no_graphs
+        )
+
+        // CREATE_T2PMHC_GRAPHS_GCN.out.graphs.dump(tag:"gcn_graphs")
+
+        predict_in_ch = gcn_globmean_graph_ch.no_graphs.join(CREATE_T2PMHC_GRAPHS_GCN_GLOBMEAN.out.graphs)
+                            .map { meta, samplesheet, empty_graphs, graphs ->
+                                    [meta, samplesheet, graphs]
+                            }
+
+        // predict binding for newly created graphs
+        PREDICT_T2PMHC_GCN_GLOBMEAN_GRAPHS (
+            predict_in_ch,
+            hyperparams_gcn_globmean,
+            model_gcn_globmean,
+            pae_full_gcn_globmean,
+            pae_tpmhc_gcn_globmean,
+            hydro_gcn_globmean,
+            distance_gcn_globmean
         )
 
         // =========================================================
@@ -100,6 +169,8 @@ workflow PREDICTION {
         model_gcn_ots       = file("${projectDir}/bin/models/gcn_ots_final.pt")
         pae_full_gcn_ots    = file("${projectDir}/bin/scalers/gcn_ots_final_pae_node_FULL.pkl")
         pae_tpmhc_gcn_ots   = file("${projectDir}/bin/scalers/gcn_ots_final_pae_node_TCRPMHC.pkl")
+        hydro_gcn_ots       = file("${projectDir}/bin/scalers/gcn_ots_final_hydro.pkl")
+        distance_gcn_ots    = file("${projectDir}/bin/scalers/gcn_ots_final_distance.pkl")
 
         gcn_ots_ch = prediction_ch.gcn_ots
 
@@ -115,10 +186,12 @@ workflow PREDICTION {
         // predict those where graphs are already present
         PREDICT_T2PMHC_GCN_OTS_GRAPHS (
             gcn_ots_graph_ch.with_graphs,
-            hyperparams_gcn,
-            model_gcn,
-            pae_full_gcn,
-            pae_tpmhc_gcn
+            hyperparams_gcn_ots,
+            model_gcn_ots,
+            pae_full_gcn_ots,
+            pae_tpmhc_gcn_ots,
+            hydro_gcn_ots,
+            distance_gcn_ots
         )
 
         // create graphs for those without
@@ -139,7 +212,9 @@ workflow PREDICTION {
             hyperparams_gcn_ots,
             model_gcn_ots,
             pae_full_gcn_ots,
-            pae_tpmhc_gcn_ots
+            pae_tpmhc_gcn_ots,
+            hydro_gcn_ots,
+            distance_gcn_ots
         )
 
         // =========================================================
@@ -222,6 +297,87 @@ workflow PREDICTION {
         PREDICT_TABR_BERT (
             prediction_ch.tabr_bert
         )
+
+        // =========================================================
+        //          tcren
+        // =========================================================
+
+        prepare_tcren_ch = prediction_ch.tcren
+            .map { meta, samplesheet, graphs ->
+                def rows = samplesheet.splitCsv(header: true, sep: '\t')
+                
+                // Extract paths
+                def paths = rows.collect { row ->
+                    file(row.pdb_file_path)
+                }
+                // Extract chainseq
+                def chainseqs = rows.collect { row ->
+                    row.target_chainseq   
+                }
+                
+                // Extract peptides and create text file
+                def peptides = rows.collect { row -> row.peptide }.unique()
+                def peptidesFile = file("${workDir}/peptides_${meta.id}_${meta.dataset}.txt")
+                peptidesFile.text = "peptide\n" + peptides.join('\n')
+                
+                return [meta, paths, chainseqs, peptidesFile]
+            }
+
+        // adapt the pdbs
+        PREPARE_TCREN (
+            prepare_tcren_ch
+        )
+
+        // predict the structures
+        PREDICT_TCREN (
+            PREPARE_TCREN.out.tcren_pdbs
+        )
+
+        //PREPARE_TCREN.out.tcren_pdbs.dump(tag: "tcren")
+
+        // prepare_tcren_ch = prediction_ch.tcren
+        //     .map { meta, samplesheet, graphs ->
+        //         // Return just what we need for CSV parsing
+        //         return [meta, samplesheet]
+        //     }
+        //     .splitCsv(header: true, sep: '\t')
+        //     .map { meta, row ->
+        //         def pdb_file = file(row.pdb_file_path, checkIfExists: true)
+        //         def chainseq = row.target_chainseq
+        //         return [meta, pdb_file, chainseq]
+        //     }
+
+        // // first: create all necessary directores
+        // CREATE_TCREN_DIRS (
+        //     prediction_ch.tcren
+        // )
+
+        // // adapt the graphs
+        // PREPARE_TCREN (
+        //     prepare_tcren_ch
+        // )
+
+        // // create peptides.txt
+        // peptides_ch = prediction_ch.tcren
+        //     .map { meta, samplesheet, graphs ->
+        //         def rows = samplesheet.splitCsv(header: true, sep: '\t')    
+        //         // Extract peptides and create text file
+        //         def peptides = rows.collect { row -> row.peptide }
+        //         def peptidesFile = file("${workDir}/peptides_${meta.id}_${meta.dataset}.txt")
+        //         peptidesFile.text = "peptide\n" + peptides.join('\n')
+                
+        //         return [meta, peptidesFile]
+        //     }
+
+        // tcren_ch = CREATE_TCREN_DIRS.out.tcren_dirs
+        //     .join(peptides_ch)
+        //     .dump(tag: "combined")
+
+            
+
+        // PREDICT_TCREN (
+        //     tcren_ch
+        // )
 
     emit:
         ch_samplesheet

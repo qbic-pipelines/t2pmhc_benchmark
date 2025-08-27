@@ -17,7 +17,6 @@ def combine_mixtcrpred_results(result_path, out):
     percent_rank = all_results_df["perc_rank"]
     # inverse --> bigger == better
     inv_perc_rank = 1 - (percent_rank / 100.0)
-    inv_perc_rank = np.clip(inv_perc_rank, 0, 1)
     # add to df as "binder_prob"
     all_results_df["binder_prob"] = inv_perc_rank
 

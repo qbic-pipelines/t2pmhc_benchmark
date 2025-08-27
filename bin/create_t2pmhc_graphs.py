@@ -22,7 +22,7 @@ from tcr_phla import read_in_samplesheet
 
 def main():
     parser = argparse.ArgumentParser(description='Predict binder status of samples in a t2pmhc samplesheets')
-    parser.add_argument('--mode', type=str, required=True, help="gcn, gcn_otsm gat")
+    parser.add_argument('--mode', type=str, required=True, help="gcn, gcn-ots, gat")
     parser.add_argument('--samplesheet', type=str, required=True, help="Path to t2pmhc samplesheet")
     parser.add_argument('--out', type=str, required=True, help="Path to store the graphs")
 
@@ -41,7 +41,7 @@ def main():
         test_dataset, test_structures = gat_create_graphs(
             pdb_files=pdb_files, metadata=metadata, sample_size=np.inf, threshold=10, load_graphs=False, saved_graphs="", store_graphs=True, name="", test_run=True, graphs_path=args.out
         )
-    elif args.mode in ["gcn", "gcn_ots"]:
+    elif args.mode in ["gcn", "gcn-ots", "gcn-globmean"]:
         logging.info("Creating Graphs -- gcn")
         test_dataset, test_structures = gcn_create_graphs(
             pdb_files=pdb_files, metadata=metadata, sample_size=np.inf, threshold=10, load_graphs=False, saved_graphs="", store_graphs=True, name="",  test_run=True, graphs_path=args.out

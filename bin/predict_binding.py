@@ -24,8 +24,8 @@ from joblib import load
 import sys
 sys.path.append('/mnt/lustre/groups/nahnsen/nahpo775/workdir/projects/tcrpha_pred/tcr_pHLApred/tcr_phla/tcr_phla/models')
 
-from models.gcn_contactmaps import GCNClassifier, create_graph_dataset as gcn_create_graphs, evaluate as gcn_evaluate
-from models.gat_contactmaps import GATClassifier, create_graph_dataset as gat_create_graphs, evaluate as gat_evaluate
+from final_models.t2pmhc_gcn import GCNClassifier, create_graph_dataset as gcn_create_graphs, evaluate as gcn_evaluate
+from final_models.t2pmhc_gat import GATClassifier, create_graph_dataset as gat_create_graphs, evaluate as gat_evaluate
 from tcr_phla import read_hyperparams, read_in_samplesheet
 
 
@@ -37,23 +37,32 @@ def scale_test(dataset, mode, pae_node_scaler, pae_tcrpmhc_node_scaler, hydro_sc
     # load shared scalers
     pae_node_scaler = load(pae_node_scaler)
     pae_tcrpmhc_node_scaler = load(pae_tcrpmhc_node_scaler)
+    hydro_scaler = load(hydro_scaler)
+    # load edge scalers
+    distance_scaler = load(distance_scaler)
 
     if mode == "gcn":
         for graph in dataset:
             pae_val = np.array([[graph.meta["PAE"]]], dtype=np.float32)
             paetcrpmhc_val = np.array([[graph.meta["PAE_TCRpMHC"]]], dtype=np.float32)
+            hydro_val = graph.meta["hydro"] # is already an array
             scaled_pae = pae_node_scaler.transform(pae_val)
             scaled_paetcrpmhc = pae_tcrpmhc_node_scaler.transform(paetcrpmhc_val)
+            scaled_hydro = hydro_scaler.transform(hydro_val)
             # Add as new feature (column) to node features
             pae_feat = torch.tensor(scaled_pae, dtype=graph.x.dtype).repeat(graph.x.size(0), 1)
             paetcrpmhc_feat = torch.tensor(scaled_paetcrpmhc, dtype=graph.x.dtype).repeat(graph.x.size(0), 1)
-            graph.x = torch.cat([graph.x, pae_feat, paetcrpmhc_feat], dim=1)
+            hydro_feat = torch.tensor(scaled_hydro)
+            graph.x = torch.cat([graph.x, pae_feat, paetcrpmhc_feat, hydro_feat], dim=1)
+            # edge feature
+            edge_features = graph.edge_features
+            distances = edge_features[:,0]
+            scaled_distances = distance_scaler.transform(distances.reshape(-1, 1))
+            graph.edge_attr = torch.tensor(scaled_distances, dtype=torch.float)
+
             
     elif mode == "gat":
-        # load node scaler currently only present in gat
-        hydro_scaler = load(hydro_scaler)
-        # load edge scalers
-        distance_scaler = load(distance_scaler)
+        # load scaler only present in gat
         pae_scaler_edge = load(pae_scaler_edge)
         
         for graph in dataset:
@@ -146,10 +155,9 @@ def main():
     else: 
         logging.info("Creating Graphs")
         # read model and scalers
-
         test_dataset, test_structures = gcn_create_graphs(pdb_files="", metadata=metadata, sample_size=np.inf, threshold=10, load_graphs=True, saved_graphs=args.graphs, store_graphs=False, name="", test_run=False, graphs_path="")
         # scale the test features
-        scale_test(test_dataset, "gcn", args.pae_scaler_structure, args.pae_scaler_tcrpmhc, "", "", "")
+        scale_test(test_dataset, "gcn", args.pae_scaler_structure, args.pae_scaler_tcrpmhc, args.hydro_scaler, args.distance_scaler, "")
         # init model
         logging.info("Initialising Model")
         model = GCNClassifier(input_dim=input_dim, hidden_dim=hidden_dim, output_dim=output_dim, dropout_rate=dropout_rate)

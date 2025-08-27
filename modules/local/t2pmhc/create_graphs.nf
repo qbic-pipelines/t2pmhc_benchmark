@@ -1,6 +1,6 @@
 process CREATE_T2PMHC_GRAPHS {
     tag "$meta.id"
-    label 'process_medium'
+    label 'process_high'
 
     publishDir "${params.outdir}/binding_prediction/graphs/${meta.dataset}", mode: 'copy',
                 saveAs: { filename -> "${filename}" }

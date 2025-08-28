@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import numpy as np
 import pickle
 from Loader import SignedPairsDataset, get_index_dicts

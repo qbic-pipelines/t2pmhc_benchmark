@@ -4,12 +4,15 @@
 
 include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GCN             } from '../../../modules/local/t2pmhc/create_graphs' 
 include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GCN_OTS         } from '../../../modules/local/t2pmhc/create_graphs' 
-include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GCN_GLOBMEAN    } from '../../../modules/local/t2pmhc/create_graphs' 
+include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GCN_GLOBMEAN    } from '../../../modules/local/t2pmhc/create_graphs'
+include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GCN_100         } from '../../../modules/local/t2pmhc/create_graphs' 
 include { CREATE_T2PMHC_GRAPHS as  CREATE_T2PMHC_GRAPHS_GAT             } from '../../../modules/local/t2pmhc/create_graphs' 
 include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_GRAPHS               } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
 include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_NOGRAPHS             } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
 include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_GLOBMEAN_GRAPHS      } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
 include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_GLOBMEAN_NOGRAPHS    } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
+include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_100_GRAPHS           } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
+include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_100_NOGRAPHS         } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
 include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_OTS_GRAPHS           } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
 include { PREDICT_T2PMHC_GCN as PREDICT_T2PMHC_GCN_OTS_NOGRAPHS         } from '../../../modules/local/t2pmhc/predict_t2pmhc_gcn'
 include { PREDICT_T2PMHC_GAT as PREDICT_T2PMHC_GAT_GRAPHS               } from '../../../modules/local/t2pmhc/predict_t2pmhc_gat'
@@ -20,6 +23,7 @@ include { PREDICT_TABR_BERT                                             } from '
 include { CREATE_TCREN_DIRS                                             } from '../../../modules/local/tcren/create_tcren_dirs'
 include { PREPARE_TCREN                                                 } from '../../../modules/local/tcren/prepare_tcren'
 include { PREDICT_TCREN                                                 } from '../../../modules/local/tcren/predict_tcren'
+include { PREDICT_ERGO2                                                 } from '../../../modules/local/ergo2/predict_ergo2'
 
 workflow PREDICTION {
     take:
@@ -34,9 +38,11 @@ workflow PREDICTION {
                 gat: meta.id == "gat"
                 gcn_ots: meta.id == "gcn-ots"
                 gcn_globmean: meta.id == "gcn-globmean"
+                gcn_100: meta.id == "gcn-100"
                 mixtcrpred: meta.id == "mixtcrpred"
                 tabr_bert: meta.id == "tabr-bert"
                 tcren: meta.id == "tcren"
+                ergo2: meta.id == "ergo2"
             }
             .set { prediction_ch}
 
@@ -103,6 +109,62 @@ workflow PREDICTION {
             pae_tpmhc_gcn,
             hydro_gcn,
             distance_gcn
+        )
+
+        // =========================================================
+        //          t2pmhc -- GCN 100
+        // =========================================================
+        // Reference the prediction files
+        hyperparams_gcn_100 = file("${projectDir}/bin/hyperparams/hyperparams_final_gcn.json")
+        model_gcn_100      = file("${projectDir}/bin/models/gcn_final_100.pt")
+        pae_full_gcn_100    = file("${projectDir}/bin/scalers/gcn_final_100_pae_node_FULL.pkl")
+        pae_tpmhc_gcn_100   = file("${projectDir}/bin/scalers/gcn_final_100_pae_node_TCRPMHC.pkl")
+        hydro_gcn_100       = file("${projectDir}/bin/scalers/gcn_final_100_hydro.pkl")
+        distance_gcn_100    = file("${projectDir}/bin/scalers/gcn_final_100_distance.pkl")
+
+        gcn_100_ch = prediction_ch.gcn_100
+
+        
+        gcn_100_ch.branch {
+            meta, samplesheet, graphs ->
+                with_graphs: !graphs.isEmpty()
+                no_graphs: graphs.isEmpty()
+        }
+        .set { gcn_100_graph_ch }
+
+
+        // predict those where graphs are already present
+        PREDICT_T2PMHC_GCN_100_GRAPHS (
+            gcn_100_graph_ch.with_graphs,
+            hyperparams_gcn_100,
+            model_gcn_100,
+            pae_full_gcn_100,
+            pae_tpmhc_gcn_100,
+            hydro_gcn_100,
+            distance_gcn_100
+        )
+
+        // create graphs for those without
+        CREATE_T2PMHC_GRAPHS_GCN_100(
+            gcn_100_graph_ch.no_graphs
+        )
+
+        // CREATE_T2PMHC_GRAPHS_GCN.out.graphs.dump(tag:"gcn_graphs")
+
+        predict_in_ch = gcn_100_graph_ch.no_graphs.join(CREATE_T2PMHC_GRAPHS_GCN_100.out.graphs)
+                            .map { meta, samplesheet, empty_graphs, graphs ->
+                                    [meta, samplesheet, graphs]
+                            }
+
+        // predict binding for newly created graphs
+        PREDICT_T2PMHC_GCN_100_NOGRAPHS (
+            predict_in_ch,
+            hyperparams_gcn_100,
+            model_gcn_100,
+            pae_full_gcn_100,
+            pae_tpmhc_gcn_100,
+            hydro_gcn_100,
+            distance_gcn_100
         )
 
         // =========================================================
@@ -296,6 +358,14 @@ workflow PREDICTION {
 
         PREDICT_TABR_BERT (
             prediction_ch.tabr_bert
+        )
+
+        // =========================================================
+        //          ERGO-II
+        // =========================================================
+
+        PREDICT_ERGO2 (
+            prediction_ch.ergo2
         )
 
         // =========================================================

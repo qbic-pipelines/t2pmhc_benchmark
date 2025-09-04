@@ -1,4 +1,4 @@
-process COMBINE_MIXTCRPRED {
+process PREDICT_MIXTCRPRED_PAN {
     tag "$meta.id"
     label 'process_single'
 
@@ -11,10 +11,12 @@ process COMBINE_MIXTCRPRED {
         'community.wave.seqera.io/library/python_pip_biopython_natsort_pruned:a18194a14d1e98f8' }"
 
     input:
-    tuple val(meta), path(mixtcrpred_out)
+    tuple val(meta), path(samplesheet), path(graphs)
+    path(mixtcrpred_dir)
+    path(pan_model)
 
     output:
-    tuple val(meta), path("${meta.id}_predicted.tsv")  , emit: mpred_pred
+    tuple val(meta), path("${meta.id}_predicted.tsv")  , emit: mpred_pan_pred
     path "versions.yml"         , emit: versions
 
     when:
@@ -25,9 +27,13 @@ process COMBINE_MIXTCRPRED {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    combine_mixtcrpred.py \\
-        --result_path ${mixtcrpred_out} \\
-        --out ${prefix}_predicted.tsv \\
+    
+    predict_mixtcrpred_pan.sh \\
+        --mpred_path ${mixtcrpred_dir} \\
+        --input ${samplesheet} \\
+        --output ${prefix}_predicted.tsv \\
+        --checkpoint ${pan_model} \\
+        --model_name pan_epitope \\
         ${args}
 
     

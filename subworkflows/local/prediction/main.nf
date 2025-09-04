@@ -19,6 +19,7 @@ include { PREDICT_T2PMHC_GAT as PREDICT_T2PMHC_GAT_GRAPHS               } from '
 include { PREDICT_T2PMHC_GAT as PREDICT_T2PMHC_GAT_NOGRAPHS             } from '../../../modules/local/t2pmhc/predict_t2pmhc_gat'
 include { PREDICT_MIXTCRPRED                                            } from '../../../modules/local/mixtcrpred/predict_mixtcrpred'
 include { COMBINE_MIXTCRPRED                                            } from '../../../modules/local/mixtcrpred/combine_mixtcrpred'
+include { PREDICT_MIXTCRPRED_PAN                                        } from '../../../modules/local/mixtcrpred/predict_mixtcrpred_pan'
 include { PREDICT_TABR_BERT                                             } from '../../../modules/local/tabr-bert/predict_tabr_bert'
 include { CREATE_TCREN_DIRS                                             } from '../../../modules/local/tcren/create_tcren_dirs'
 include { PREPARE_TCREN                                                 } from '../../../modules/local/tcren/prepare_tcren'
@@ -40,6 +41,7 @@ workflow PREDICTION {
                 gcn_globmean: meta.id == "gcn-globmean"
                 gcn_100: meta.id == "gcn-100"
                 mixtcrpred: meta.id == "mixtcrpred"
+                mixtcrpred_pan: meta.id == "mixtcrpred-pan"
                 tabr_bert: meta.id == "tabr-bert"
                 tcren: meta.id == "tcren"
                 ergo2: meta.id == "ergo2"
@@ -339,6 +341,10 @@ workflow PREDICTION {
         // =========================================================
         mixtcrpred_path         = file("${projectDir}/bin/MixTCRpred")
         mixtcrpred_models       = file("${projectDir}/bin/MixTCRpred/pretrained_models")
+        pan_model               = file("${projectDir}/bin/MixTCRpred/pretrained_models/mixtrcpred_pan_epitope.ckpt")
+
+        print(pan_model)
+        prediction_ch.mixtcrpred_pan.dump(tag: "pan")
 
         PREDICT_MIXTCRPRED (
             prediction_ch.mixtcrpred,
@@ -348,6 +354,13 @@ workflow PREDICTION {
 
         COMBINE_MIXTCRPRED (
             PREDICT_MIXTCRPRED.out.mixtcrpred_results
+        )
+
+        // mixtcrpred pan
+        PREDICT_MIXTCRPRED_PAN (
+            prediction_ch.mixtcrpred_pan,
+            mixtcrpred_path,
+            pan_model
         )
 
         

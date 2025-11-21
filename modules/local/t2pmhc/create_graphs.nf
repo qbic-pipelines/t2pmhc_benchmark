@@ -5,10 +5,8 @@ process CREATE_T2PMHC_GRAPHS {
     publishDir "${params.outdir}/binding_prediction/graphs/${meta.dataset}", mode: 'copy',
                 saveAs: { filename -> "${filename}" }
 
-    conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/python_scikit-learn_pip_biopython_pruned:e0af158d5b414f68' :
-        'community.wave.seqera.io/library/python_scikit-learn_pip_biopython_pruned:3781a75b1cc752a2' }"
+    // set docker container
+    container "docker://mvp9/t2pmhc:0.1.0"
 
     input:
     tuple val(meta), path(samplesheet), path(graphs)
@@ -23,10 +21,11 @@ process CREATE_T2PMHC_GRAPHS {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}_${meta.dataset}"
+    def mode = "t2pmhc-${meta.id}"
 
     """
-    create_t2pmhc_graphs.py \\
-        --mode ${meta.id} \\
+    t2pmhc create-t2pmhc-graphs \\
+        --mode ${mode} \\
         --samplesheet ${samplesheet} \\
         --out ${prefix}_graphs.pt \\
         ${args}

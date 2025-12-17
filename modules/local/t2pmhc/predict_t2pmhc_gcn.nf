@@ -11,12 +11,6 @@ process PREDICT_T2PMHC_GCN {
 
     input:
     tuple val(meta), path(samplesheet), path(graphs)
-    path(hyperparams)
-    path(model)
-    path(pae_scaler_full)
-    path(pae_scaler_tcrpmhc)
-    path(hydro_scaler)
-    path(distance_scaler)
 
     output:
     tuple val(meta), path("${meta.id}_predicted.tsv")  , emit: gcn_pred

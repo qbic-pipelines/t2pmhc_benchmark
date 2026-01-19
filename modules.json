@@ -1,6 +1,6 @@
 {
-    "name": "nf-core/tcrpmhcbinding",
-    "homePage": "https://github.com/nf-core/tcrpmhcbinding",
+    "name": "nf-core/t2pmhc_benchmark",
+    "homePage": "https://github.com/nf-core/t2pmhc_benchmark",
     "repos": {
         "https://github.com/nf-core/modules.git": {
             "modules": {

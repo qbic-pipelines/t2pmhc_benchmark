@@ -3,7 +3,7 @@
 
 This script is used to predict the binding status of a samplesheet using a given t2pmhc model.
 It gives out a table with binding prediction.
-It's part of the nf-core/tcrpmhcbinding pipeline
+It's part of the nf-core/t2pmhc_benchmark pipeline
 
 Author: Mark Polster
 

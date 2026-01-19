@@ -1,5 +1,5 @@
 //
-// Subworkflow with functionality specific to the nf-core/tcrpmhcbinding pipeline
+// Subworkflow with functionality specific to the nf-core/t2pmhc_benchmark pipeline
 //
 
 /*

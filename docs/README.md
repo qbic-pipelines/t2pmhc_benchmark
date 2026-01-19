@@ -1,6 +1,6 @@
-# nf-core/tcrpmhcbinding: Documentation
+# nf-core/t2pmhc_benchmark: Documentation
 
-The nf-core/tcrpmhcbinding documentation is split into the following pages:
+The nf-core/t2pmhc_benchmark documentation is split into the following pages:
 
 - [Usage](usage.md)
   - An overview of how the pipeline works, how to run it and a description of all of the different command-line flags.

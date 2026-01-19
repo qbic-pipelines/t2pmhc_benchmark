@@ -1,4 +1,4 @@
-# nf-core/tcrpmhcbinding: Output
+# nf-core/t2pmhc_benchmark: Output
 
 ## Introduction
 

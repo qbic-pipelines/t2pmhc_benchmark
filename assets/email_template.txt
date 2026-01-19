@@ -4,15 +4,15 @@
   |\\ | |__  __ /  ` /  \\ |__) |__         }  {
   | \\| |       \\__, \\__/ |  \\ |___     \\`-._,-`-,
                                         `._,._,'
-  nf-core/tcrpmhcbinding ${version}
+  nf-core/t2pmhc_benchmark ${version}
 ----------------------------------------------------
 Run Name: $runName
 
 <% if (success){
-    out << "## nf-core/tcrpmhcbinding execution completed successfully! ##"
+    out << "## nf-core/t2pmhc_benchmark execution completed successfully! ##"
 } else {
     out << """####################################################
-## nf-core/tcrpmhcbinding execution completed unsuccessfully! ##
+## nf-core/t2pmhc_benchmark execution completed unsuccessfully! ##
 ####################################################
 The exit status of the task that caused the workflow execution to fail was: $exitStatus.
 The full error message was:
@@ -35,5 +35,5 @@ Pipeline Configuration:
 <% out << summary.collect{ k,v -> " - $k: $v" }.join("\n") %>
 
 --
-nf-core/tcrpmhcbinding
-https://github.com/nf-core/tcrpmhcbinding
+nf-core/t2pmhc_benchmark
+https://github.com/nf-core/t2pmhc_benchmark

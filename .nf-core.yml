@@ -11,7 +11,7 @@ lint:
 
 template:
   org: nf-core
-  name: tcrpmhcbinding
+  name: t2pmhc_benchmark
   description: A unified pipeline for running and comparing diverse machine learning
     tools to predict T cell-antigen interactions.
   author: Mark Polster

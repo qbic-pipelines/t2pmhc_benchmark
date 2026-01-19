@@ -2,6 +2,6 @@ contact_links:
   - name: Join nf-core
     url: https://nf-co.re/join
     about: Please join the nf-core community here
-  - name: "Slack #tcrpmhcbinding channel"
-    url: https://nfcore.slack.com/channels/tcrpmhcbinding
-    about: Discussion about the nf-core/tcrpmhcbinding pipeline
+  - name: "Slack #t2pmhc_benchmark channel"
+    url: https://nfcore.slack.com/channels/t2pmhc_benchmark
+    about: Discussion about the nf-core/t2pmhc_benchmark pipeline

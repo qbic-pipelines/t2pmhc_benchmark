@@ -1,11 +1,11 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-core/tcrpmhcbinding
+    nf-core/t2pmhc_benchmark
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-core/tcrpmhcbinding
-    Website: https://nf-co.re/tcrpmhcbinding
-    Slack  : https://nfcore.slack.com/channels/tcrpmhcbinding
+    Github : https://github.com/nf-core/t2pmhc_benchmark
+    Website: https://nf-co.re/t2pmhc_benchmark
+    Slack  : https://nfcore.slack.com/channels/t2pmhc_benchmark
 ----------------------------------------------------------------------------------------
 */
 
@@ -15,9 +15,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { TCRPMHCBINDING  } from './workflows/tcrpmhcbinding'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_tcrpmhcbinding_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_tcrpmhcbinding_pipeline'
+include { t2pmhc_benchmark  } from './workflows/t2pmhc_benchmark'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_t2pmhc_benchmark_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_t2pmhc_benchmark_pipeline'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -27,7 +27,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_tcrp
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow NFCORE_TCRPMHCBINDING {
+workflow NFCORE_t2pmhc_benchmark {
 
     take:
     samplesheet // channel: samplesheet read in from --input
@@ -37,11 +37,11 @@ workflow NFCORE_TCRPMHCBINDING {
     //
     // WORKFLOW: Run pipeline
     //
-    TCRPMHCBINDING (
+    t2pmhc_benchmark (
         samplesheet
     )
     emit:
-    multiqc_report = TCRPMHCBINDING.out.multiqc_report // channel: /path/to/multiqc_report.html
+    multiqc_report = t2pmhc_benchmark.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -67,7 +67,7 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NFCORE_TCRPMHCBINDING (
+    NFCORE_t2pmhc_benchmark (
         PIPELINE_INITIALISATION.out.samplesheet
     )
     //
@@ -80,7 +80,7 @@ workflow {
         params.outdir,
         params.monochrome_logs,
         params.hook_url,
-        NFCORE_TCRPMHCBINDING.out.multiqc_report
+        NFCORE_t2pmhc_benchmark.out.multiqc_report
     )
 }
 

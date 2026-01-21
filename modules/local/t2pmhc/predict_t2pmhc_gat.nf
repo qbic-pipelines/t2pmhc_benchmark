@@ -6,7 +6,7 @@ process PREDICT_T2PMHC_GAT {
                 saveAs: { filename -> "${filename}" }
 
     // set docker container
-    container "docker://mvp9/t2pmhc:release"
+    container "docker://mvp9/t2pmhc:1.0.0"
 
     input:
     tuple val(meta), path(samplesheet), path(graphs)

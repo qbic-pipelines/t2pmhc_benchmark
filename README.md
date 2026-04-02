@@ -6,10 +6,10 @@
 This pipeline was created for benchmarking t2pmhc with state-of-the-art TCR-pMHC binding predictors.
 **The pipeline is NOT INTENDED for users but to showcase the benchmark performed for the t2pmhc publication.**
 
-Three test sests were used in the study.
+Three test sets were used in the study.
 
 1. public test set (available here at ```data/test/public_test_set.tsv```). See publication for more information.
-2. Immrep23-solution (availabe [here](https://github.com/justin-barton/IMMREP23/blob/main/data/solutions.csv))
+2. Immrep23-solution (available [here](https://github.com/justin-barton/IMMREP23/blob/main/data/solutions.csv))
 3. epytope-viral (available on Zenodo as described in the [ePytope-TCR manuscript](https://www.sciencedirect.com/science/article/pii/S2666979X25002022?via%3Dihub#sec7.2.3)
 
 ## Usage
@@ -36,7 +36,7 @@ MixTCRpred is licensed and must be installed by the user as described in their [
 MixTCRpred-pan is not made available by the authors, but must be retrained as described by the authors ([here](https://github.com/GfellerLab/MixTCRpred/issues/7)). The model must be stored here: ```bin/MixTCRpred/pretrained_models/mixtrcpred_pan_epitope.ckpt```
 
 ```bash
-nextflow run nf-core/t2pmhc_benchmark \
+nextflow run qbic-pipelines/t2pmhc_benchmark \
    -profile <docker/singularity/.../institute> \
    --input samplesheet.csv \
    --outdir <OUTDIR>

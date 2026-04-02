@@ -14,8 +14,8 @@ Example `samplesheet.csv`:
 
 ```csv
 model_name,dataset_name,model_samplesheet,dataset_graphs
-gcn,test1,t2pmhc_samplesheet.tsv,
-gat,test1,t2pmhc_samplesheet.tsv,
+gcn,test1,t2pmhc_samplesheet.tsv,/path/to/gcn_graphs
+gat,test1,t2pmhc_samplesheet.tsv,/path/to/gat_graphs
 mixtcrpred,test1,t2pmhc_samplesheet.csv,
 mixtcrpred-pan,test1,mixtcrpred_samplesheet.csv,
 ergo2,test1,ergo2_samplesheet.csv,
@@ -23,6 +23,8 @@ tabr-bert,test1,tabr-bert_samplesheet.csv,
 ```
 
 The model_samplesheets must be in the format as expected by the individual models.
+
+For t2pmhc models (gcn, gat), pre-computed graphs must be provided via the `dataset_graphs` column. Graphs can be created using [t2pmhc](https://github.com/mapo9/t2pmhc) directly.
 
 MixTCRpred is licensed and must be installed by the user as described in their [Github](https://github.com/GfellerLab/MixTCRpred). The required location in this pipeline is ```bin/MixTCRpred```. The pretrained models must be stored here: ```bin/MixTCRpred/pretrained_models```</br>
 MixTCRpred-pan is not made available by the authors, but must be retrained as described by the authors ([here](https://github.com/GfellerLab/MixTCRpred/issues/7)). The model must be stored here: ```bin/MixTCRpred/pretrained_models/mixtrcpred_pan_epitope.ckpt```

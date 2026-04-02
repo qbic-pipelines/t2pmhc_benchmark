@@ -6,6 +6,12 @@
 This pipeline was created for benchmarking t2pmhc with state-of-the-art TCR-pMHC binding predictors.
 **The pipeline is NOT INTENDED for users but to showcase the benchmark performed for the t2pmhc publication.**
 
+Three test sests were used in the study.
+
+1. public test set (available here at ```data/test/public_test_set.tsv```). See publication for more information.
+2. Immrep23-solution (availabe [here](https://github.com/justin-barton/IMMREP23/blob/main/data/solutions.csv))
+3. epytope-viral (available on Zenodo as described in the [ePytope-TCR manuscript](https://www.sciencedirect.com/science/article/pii/S2666979X25002022?via%3Dihub#sec7.2.3)
+
 ## Usage
 
 You can run the pipeline using:

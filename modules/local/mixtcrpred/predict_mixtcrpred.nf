@@ -6,10 +6,6 @@ process PREDICT_MIXTCRPRED {
     // publishDir "${params.outdir}/binding_prediction/${meta.dataset}_mixtcrpred_models", mode: 'copy',
                 //saveAs: { filename -> "${filename}" }
 
-    conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/python_pip_biopython_natsort_pruned:3813942a2ace4c49' :
-        'community.wave.seqera.io/library/python_pip_biopython_natsort_pruned:a18194a14d1e98f8' }"
 
     input:
     tuple val(meta), path(samplesheet), path(graphs)

@@ -60,8 +60,6 @@ workflow PREDICTION {
         // =========================================================
         //          t2pmhc -- GCN
         // =========================================================
-        // Reference the prediction files
-        hyperparams_gcn = file("${projectDir}/bin/hyperparams/hyperparams_final_gcn.json")
 
         gcn_ch = prediction_ch.gcn
 
@@ -98,7 +96,6 @@ workflow PREDICTION {
         // =========================================================
         //          t2pmhc -- GAT
         // =========================================================
-        hyperparams_gat = file("${projectDir}/bin/hyperparams/hyperparams_final_gat.json")
 
         gat_ch = prediction_ch.gat
 

@@ -21,9 +21,6 @@ workflow PREDICTION {
             meta, samplesheet, graphs ->
                 gcn: meta.id == "gcn"
                 gat: meta.id == "gat"
-                gcn_ots: meta.id == "gcn-ots"
-                gcn_globmean: meta.id == "gcn-globmean"
-                gcn_100: meta.id == "gcn-100"
                 mixtcrpred: meta.id == "mixtcrpred"
                 mixtcrpred_pan: meta.id == "mixtcrpred-pan"
                 tabr_bert: meta.id == "tabr-bert"

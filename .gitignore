@@ -6,4 +6,8 @@ testing/
 testing*
 *.pyc
 null/
+*/PLAN.md
 dev_test/
+tasks/
+publication/data/
+

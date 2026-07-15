@@ -1,0 +1,5 @@
+model_name,dataset_name,model_samplesheet,dataset_graphs
+mixtcrpred-pan,public_set,/mnt/volume/workdir/projects/t2pmhc_revisions/new_benchmark/run_mpredpan_full/mpred_pan_in/test_mhc1_complete_highfreq_peptides_mixtcrpred.csv
+mixtcrpred-pan,immrep23,/mnt/volume/workdir/projects/t2pmhc_revisions/new_benchmark/run_mpredpan_full/mpred_pan_in/test_immrep23_solutions_mixtcrpred.csv
+mixtcrpred-pan,epytope_viral,/mnt/volume/workdir/projects/t2pmhc_revisions/new_benchmark/run_mpredpan_full/mpred_pan_in/t2pmhc_epytope_viral_mixtcrpred.csv
+mixtcrpred-pan,iggytop_unseen,/mnt/volume/workdir/projects/t2pmhc_revisions/new_benchmark/run_mpredpan_full/mpred_pan_in/iggytop_unseen_mixtcrpred.csv

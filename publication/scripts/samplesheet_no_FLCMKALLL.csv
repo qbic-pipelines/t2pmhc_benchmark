@@ -1,0 +1,5 @@
+id,input_table,t2pmhc_graphs
+public_set,/mnt/volume/workdir/projects/consensus_tool/consensus_experiment/test_data/test_mhc1_complete_highfreq_peptides.tsv,/mnt/volume/workdir/projects/consensus_tool/consensus_experiment/tcrpmhcbinding_results/2026-05-20_tcrpmhcbinding_out/t2pmhc/graphs/public_set_graphs.pt
+immrep23,/mnt/volume/workdir/projects/consensus_tool/consensus_experiment/test_data/test_immrep23_solutions.tsv,/mnt/volume/workdir/projects/consensus_tool/consensus_experiment/tcrpmhcbinding_results/2026-05-20_tcrpmhcbinding_out/t2pmhc/graphs/immrep23_graphs.pt
+epytope_viral,/mnt/volume/workdir/projects/consensus_tool/consensus_experiment/test_data/t2pmhc_epytope_viral.tsv,/mnt/volume/workdir/projects/consensus_tool/consensus_experiment/tcrpmhcbinding_results/2026-05-20_tcrpmhcbinding_out/t2pmhc/graphs/epytope_viral_graphs.pt
+iggytop_unseen,/mnt/volume/workdir/projects/t2pmhc_revisions/iggytop_benchmark/iggytop_unseen_no_FLCMKALLL.tsv,

@@ -42,6 +42,58 @@ nextflow run qbic-pipelines/t2pmhc_benchmark \
    --outdir <OUTDIR>
 ```
 
+## Reproducing the publication figures
+
+The `publication/` directory regenerates every manuscript figure from stored prediction tables,
+so a clean clone can reproduce the results end-to-end. It bundles the input tables, the scripts
+that (re)build them from the published pipelines, and the notebooks that turn them into figures.
+
+```
+publication/
+├── data.tar.gz   # input tables (extract before running notebooks)
+├── scripts/      # regenerate data/ via the pinned, published pipelines
+├── notebooks/    # produce the figures from data/
+├── lib/          # vendored helpers
+└── figures/      # generated figures (svg + png)
+```
+
+### 1. Extract the input tables
+
+```bash
+cd publication
+tar -xzf data.tar.gz     # -> data/
+```
+
+### 2. Set up the environment
+
+Package versions are pinned in `publication/requirements.txt`.
+
+### 3. (Optional) Regenerate the input tables
+
+The tables in `data/` are the verbatim outputs of the pinned, published pipelines. To rebuild
+them, run the scripts in `publication/scripts/` (each pins its pipeline by GitHub/container
+coordinate; see `publication/scripts/PROVENANCE.md` for run details):
+
+| Script | Produces (`data/` subdir) | Pipeline (pin) |
+|---|---|---|
+| `run_tcrpmhcbinding.sh` | `analyzer/`, `tcrdock_pae/` | `mapo9/tcrpmhcbinding` (`b58c28c`) |
+| `run_tcrpmhcbinding_tcren.sh` | `analyzer_tcren/` | `mapo9/tcrpmhcbinding` (`b58c28c`) |
+| `run_mpredpan.sh` | `mixtcrpred_pan/` | `qbic-pipelines/t2pmhc_benchmark` (`1.0.0`) |
+| `run_panpep.sh` | PanPep predictions | `ghcr.io/qbic-pipelines/panpep:b44ffb1` |
+
+### 4. Run the notebooks
+
+Run each from `publication/notebooks/` (Restart & Run All). Figures are written to
+`publication/figures/<name>/`.
+
+| Notebook | Output |
+|---|---|
+| `calibrate_probabilities.ipynb` | recalibrates stCRDab probabilities — **run before `figure5`** |
+| `figure5_benchmark.ipynb` | Figure 5 (benchmark) + result tables + significance tests |
+| `figure2_dataset_overview.ipynb` | Figure 2 (dataset overview) |
+| `attention_structure_graphs.ipynb` | structure attention panels |
+| `figure_attention.ipynb` | GCN attention panels |
+
 ## Citations
 
 You can cite the `nf-core` publication as follows:

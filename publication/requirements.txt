@@ -1,0 +1,26 @@
+# Python environment for ALL publication/ reproduction notebooks.
+# Analyses were performed in the `consensus` conda env
+# (/mnt/volume/bin/miniconda/envs/consensus); versions pinned from that env.
+#
+# Per-notebook tool usage:
+#   calibrate_probabilities.ipynb    -> pandas, numpy, scikit-learn, scipy, matplotlib, seaborn
+#   figure5_benchmark.ipynb          -> pandas, numpy, matplotlib, seaborn, scikit-learn, scipy
+#   figure2_dataset_overview.ipynb   -> pandas, numpy, matplotlib, seaborn, pypalettes
+#   attention_structure_graphs.ipynb -> pandas, numpy, matplotlib, networkx, biopython
+#   figure_attention.ipynb           -> pandas, numpy, matplotlib, seaborn, scipy, logomaker
+# Each future figure appends any new tools it needs to this single shared file.
+
+pandas==3.0.0
+numpy==2.4.3
+matplotlib==3.10.8
+seaborn==0.13.2
+scikit-learn==1.8.0
+scipy==1.17.1
+pypalettes==0.2.1
+networkx==3.6.1
+biopython==1.87
+logomaker==0.8.7
+
+# notebook execution
+jupyter==1.1.1
+ipykernel==7.2.0

@@ -7,7 +7,7 @@ process PREDICT_T2PMHC_GCN {
 
     conda "${moduleDir}/environment.yml"
     // set docker container
-    container "docker://mvp9/t2pmhc:1.0.0"
+    container "docker://mvp9/t2pmhc:1.1.0"
 
     input:
     tuple val(meta), path(samplesheet), path(graphs)

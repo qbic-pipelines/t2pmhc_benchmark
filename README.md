@@ -33,7 +33,8 @@ The model_samplesheets must be in the format as expected by the individual model
 For t2pmhc models (gcn, gat), pre-computed graphs must be provided via the `dataset_graphs` column. Graphs can be created using [t2pmhc](https://github.com/mapo9/t2pmhc) directly.
 
 MixTCRpred is licensed and must be installed by the user as described in their [Github](https://github.com/GfellerLab/MixTCRpred). The required location in this pipeline is ```bin/MixTCRpred```. The pretrained models must be stored here: ```bin/MixTCRpred/pretrained_models```</br>
-MixTCRpred-pan is not made available by the authors, but must be retrained as described by the authors ([here](https://github.com/GfellerLab/MixTCRpred/issues/7)). The model must be stored here: ```bin/MixTCRpred/pretrained_models/mixtrcpred_pan_epitope.ckpt```
+MixTCRpred-pan is not made available by the authors, but must be retrained as described by the authors ([here](https://github.com/GfellerLab/MixTCRpred/issues/7)). The model must be stored here: ```bin/MixTCRpred/pretrained_models/mixtrcpred_pan_epitope.ckpt```</br>
+TABR-BERT ships its own Docker container that may only be used for non-academic use (see their License). The container can be found on the [github repository](https://github.com/freshwind-Bioinformatics/TABR-BERT#1-dockerrecommend). You can plug it into its module (modules/local/tabr-bert/predict_tabr_bert.nf) under the respective comment. 
 
 ```bash
 nextflow run qbic-pipelines/t2pmhc_benchmark \

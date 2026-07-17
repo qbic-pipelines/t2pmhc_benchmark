@@ -5,8 +5,8 @@ process PREDICT_TABR_BERT {
     publishDir "${params.outdir}/binding_prediction/predictions/${meta.dataset}", mode: 'copy',
                 saveAs: { filename -> "${filename}" }
 
-    conda "${moduleDir}/environment.yml"
-    container 'docker://freshwindbioinformatics/tabr-bert:v1'
+    // need to fill in tabr-bert docker container here
+    // container
 
     input:
     tuple val(meta), path(samplesheet), path(graphs)

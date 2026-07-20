@@ -95,6 +95,123 @@ Run each from `publication/notebooks/` (Restart & Run All). Figures are written 
 | `attention_structure_graphs.ipynb` | structure attention panels |
 | `figure_attention.ipynb` | GCN attention panels |
 
+## Other models
+
+The predictors benchmarked against t2pmhc are described below. Each entry pins the
+exact implementation used at the time of analysis. Where a tool has since changed
+upstream, the commit is preserved via a fork and/or archive so the numbers remain
+reproducible.
+
+### ERGO-II
+
+ERGO-II was run using its Python implementation at commit `85d320a`
+(`https://github.com/IdoSpringer/ERGO-II`; no tagged release exists, so a commit is
+pinned). We applied minor modifications only: automated device selection (CPU/GPU)
+and updated paths to the bundled pre-trained models. The vdjdb-based ERGO-II model
+was used.
+
+```bash
+git clone https://github.com/IdoSpringer/ERGO-II.git
+cd ERGO-II && git checkout 85d320a
+```
+
+### TABR-BERT
+
+TABR-BERT was run using the official Docker container with the pre-trained
+embeddings provided by the authors
+(`https://github.com/freshwind-Bioinformatics/TABR-BERT#1-dockerrecommend`). No
+source commit is pinned because the tool is distributed as a prebuilt container.
+Note the container may only be used for non-academic purposes (see the authors'
+license).
+
+### MixTCRpred
+
+MixTCRpred was run using its Python implementation v1.0
+(`https://github.com/GfellerLab/MixTCRpred`, tag `v1.0`). MixTCRpred employs a
+separate model per peptide, so predictions were performed individually for each
+peptide. Unlike the other predictors it reports a percent-rank score, with lower
+values indicating higher binding probability; to keep the score convention
+consistent across tools these were normalized to `[0, 1]` and inverted
+(`1 − normalized score`), so higher values indicate predicted binding.
+
+```bash
+git clone --branch v1.0 https://github.com/GfellerLab/MixTCRpred.git
+```
+
+### MixTCRpred-pan
+
+MixTCRpred-pan was not publicly available at the time of writing. It was retrained
+on the original `pan_training_set` exactly as described by the authors (see
+`https://github.com/GfellerLab/MixTCRpred/issues/7`). As for MixTCRpred, the
+percent-rank score was normalized to `[0, 1]` and inverted.
+
+### TULIP-TCR
+
+TULIP-TCR was run using its official implementation at commit `798fab9`
+(`https://github.com/barthelemymp/TULIP-TCR`) with the pre-trained weights released
+by the authors.
+
+```bash
+git clone https://github.com/barthelemymp/TULIP-TCR.git
+cd TULIP-TCR && git checkout 798fab9
+```
+
+### TCRen
+
+TCRen was run using its R implementation at commit
+`b85f19a54ac38c7538bff6c2eba1c896ce1be5be`. Because the upstream repository
+(`antigenomics/tcren-ms`) has since been rewritten from R to Python, renamed to
+`antigenomics/tcren`, and moved its default branch to the Python version (the R
+code survives only under the git tag `legacy-r-1.0`), we saved a copy of the exact
+commit used here as a fork (`https://github.com/mapo9/tcren-ms`) and as an archive
+(doi:10.5281/zenodo.11129800). The commands below still clone the original
+repository.
+
+Each TCR-pMHC complex was scored with TCRen's residue-level statistical potential,
+using the **same TCRdock-predicted structures that t2pmhc uses**, so the comparison
+is on identical inputs. TCRen expects a specific input format, so we converted the
+TCRdock structures: each single-chain TCRdock PDB was relabelled by re-assigning
+its residues to the MHC, peptide, TCRα and TCRβ entities based on the chain-segment
+boundaries, rewriting the PDB chain-identifier column accordingly, and inserting
+the corresponding chain breaks, producing TCRen-compatible input structures. TCRen
+scores were then inverted so that **higher values indicate more favourable
+predicted recognition**, consistent with the other predictors.
+
+```bash
+git clone https://github.com/antigenomics/tcren-ms.git
+cd tcren-ms && git checkout b85f19a54ac38c7538bff6c2eba1c896ce1be5be
+```
+
+As run for this benchmark, the conversion and TCRen scoring are executed by
+`publication/scripts/run_tcrpmhcbinding_tcren.sh` (via the pinned pipeline
+`mapo9/tcrpmhcbinding@b58c28c` under the Docker profile); the score inversion is
+applied in `publication/notebooks/figure5_benchmark.ipynb`.
+
+### PanPep
+
+PanPep was run using its Python implementation at commit `b44ffb1`
+(`https://github.com/bm2-lab/PanPep`) in the zero-shot setting with the pre-trained
+models provided by the authors.
+
+```bash
+git clone https://github.com/bm2-lab/PanPep.git
+cd PanPep && git checkout b44ffb185a5c5fe177bc1e0a77453d6d55cf5e14
+```
+
+### TCRdock-PAE
+
+TCRdock-PAE is a PAE-as-classifier baseline. The mean interface PAE from the
+TCRdock-predicted complex (`https://github.com/phbradley/TCRdock`, tag `v2.0.0`) was
+used directly as a discriminative score. Because lower PAE indicates higher
+predicted confidence, the **negated mean PAE** was used so that higher values
+correspond to predicted binding. In this repo the PAE values are consumed in
+`publication/notebooks/figure5_benchmark.ipynb` (treated as an inverted model).
+
+```bash
+git clone https://github.com/phbradley/TCRdock.git
+cd TCRdock && git checkout v2.0.0
+```
+
 ## Citations
 
 You can cite the `nf-core` publication as follows:
@@ -115,3 +232,15 @@ You can cite the `nf-core` publication as follows:
 
 **TABR-BERT**
 > Zhang, J. et al. (2024). Accurate TCR-pMHC interaction prediction using a BERT-based transfer learning method. *Briefings in Bioinformatics*, 25(1), bbad436. https://doi.org/10.1093/bib/bbad436
+
+**TCRen**
+> Karnaukhov, V. et al. (2024). Structure-based prediction of T cell receptor recognition of unseen epitopes using TCRen. *Nature Computational Science*, 4(7), 510–521. https://doi.org/10.1038/s43588-024-00653-0
+
+**TULIP-TCR**
+> Meynard-Piganeau, B. et al. (2024). TULIP: A transformer-based unsupervised language model for interacting peptides and T cell receptors that generalizes to unseen epitopes. *Proceedings of the National Academy of Sciences*, 121(24), e2316401121. https://doi.org/10.1073/pnas.2316401121
+
+**PanPep**
+> Gao, Y. et al. (2023). Pan-Peptide Meta Learning for T-cell receptor–antigen binding recognition. *Nature Machine Intelligence*, 5, 236–249. https://doi.org/10.1038/s42256-023-00619-3
+
+**TCRdock**
+> Bradley, P. (2023). Structure-based prediction of T cell receptor:peptide-MHC interactions. *eLife*, 12, e82813. https://doi.org/10.7554/eLife.82813

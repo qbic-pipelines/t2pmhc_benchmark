@@ -52,8 +52,7 @@ Model performance is reported as the mean per-peptide AUC, not as a single poole
 all test pairs:
 
 1. the test set is grouped by peptide;
-2. an AUC is computed within each peptide group, over that peptide's positives and its
-   assigned negatives;
+2. an AUC is computed within each peptide group;
 3. the per-peptide AUCs are averaged, and the standard deviation across peptides is
    reported alongside the mean;
 4. a 95% confidence interval per peptide is obtained by bootstrap resampling stratified

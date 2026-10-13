@@ -72,6 +72,25 @@ comparable between t2pmhc and a given competitor, but not between two competitor
 Pooled AUCs over all TCR-pMHC pairs of a dataset are computed alongside the per-peptide
 values and are reported in the supplementary material of the publication.
 
+### Two evaluation settings
+
+Two evaluations coexist across the t2pmhc repositories and are not interchangeable. This
+repository implements the benchmark evaluation on held-out test sets. Cross-validation on the
+training split is implemented in the main package
+([qbic-pipelines/t2pmhc](https://github.com/qbic-pipelines/t2pmhc), branches
+`hyperparameter_search`, `pae_ablation_experiment`, `angstrom_threshold_experiment`) and
+serves model selection rather than benchmarking.
+
+| | Cross-validation (main package) | Per-peptide benchmark (this repository) |
+|---|---|---|
+| Data | training split | held-out test sets, leakage-free per comparison |
+| Unit of evaluation | one fold | one peptide |
+| Metric | AUC over the validation fold | AUC within each peptide, averaged across peptides |
+| Reported spread | across folds | across peptides, plus per-peptide bootstrap 95% CI |
+| Peptide frequency | abundant peptides dominate the fold metric | every peptide contributes equally |
+| Signal scored | includes separation between peptides | only the within-peptide ranking of TCRs |
+| Purpose | hyperparameter search, contact-threshold and PAE ablations | all benchmark results reported in the publication |
+
 ## Reproducing the publication figures
 
 The `publication/` directory regenerates every manuscript figure from stored prediction tables,

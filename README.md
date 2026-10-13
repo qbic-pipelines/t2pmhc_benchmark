@@ -43,6 +43,53 @@ nextflow run qbic-pipelines/t2pmhc_benchmark \
    --outdir <OUTDIR>
 ```
 
+## Evaluation protocol
+
+The model implementation and the command-line tool are maintained in the main package,
+[qbic-pipelines/t2pmhc](https://github.com/qbic-pipelines/t2pmhc).
+
+Model performance is reported as the mean per-peptide AUC, not as a single pooled AUC over
+all test pairs:
+
+1. the test set is grouped by peptide;
+2. an AUC is computed within each peptide group;
+3. the per-peptide AUCs are averaged, and the standard deviation across peptides is
+   reported alongside the mean;
+4. a 95% confidence interval per peptide is obtained by bootstrap resampling stratified
+   by binder status;
+5. t2pmhc is compared with each competitor by a two-sided Wilcoxon signed-rank test on the
+   shared per-peptide AUC pairs (exact null distribution for fewer than 15 peptides),
+   with Holm-Bonferroni correction applied per dataset and split, and matched-pairs
+   rank-biserial correlation as the effect size.
+
+Seen/Unseen splits and leakage removal is applied per competitor. Each pairwise comparison runs on the intersection
+of the leakage-free subsets of t2pmhc and of the respective competitor, separately for seen
+and unseen peptides, and both methods are scored on exactly that shared subset. The number
+of peptides therefore differs between comparisons and is reported per comparison. AUCs are
+comparable between t2pmhc and a given competitor, but not between two competitors.
+
+Pooled AUCs over all TCR-pMHC pairs of a dataset are computed alongside the per-peptide
+values and are reported in the supplementary material of the publication.
+
+### Two evaluation settings
+
+Two evaluations coexist across the t2pmhc repositories and are not interchangeable. This
+repository implements the benchmark evaluation on held-out test sets. Cross-validation on the
+training split is implemented in the main package
+([qbic-pipelines/t2pmhc](https://github.com/qbic-pipelines/t2pmhc), branches
+`hyperparameter_search`, `pae_ablation_experiment`, `angstrom_threshold_experiment`) and
+serves model selection rather than benchmarking.
+
+| | Cross-validation (main package) | Per-peptide benchmark (this repository) |
+|---|---|---|
+| Data | training split | held-out test sets, leakage-free per comparison |
+| Unit of evaluation | one fold | one peptide |
+| Metric | AUC over the validation fold | AUC within each peptide, averaged across peptides |
+| Reported spread | across folds | across peptides, plus per-peptide bootstrap 95% CI |
+| Peptide frequency | abundant peptides dominate the fold metric | every peptide contributes equally |
+| Signal scored | includes separation between peptides | only the within-peptide ranking of TCRs |
+| Purpose | hyperparameter search, contact-threshold and PAE ablations | all benchmark results reported in the publication |
+
 ## Reproducing the publication figures
 
 The `publication/` directory regenerates every manuscript figure from stored prediction tables,

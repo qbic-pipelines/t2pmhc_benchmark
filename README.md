@@ -63,7 +63,7 @@ all test pairs:
    with Holm-Bonferroni correction applied per dataset and split, and matched-pairs
    rank-biserial correlation as the effect size.
 
-Leakage removal is applied per competitor. Each pairwise comparison runs on the intersection
+Seen/Unseen splits and leakage removal is applied per competitor. Each pairwise comparison runs on the intersection
 of the leakage-free subsets of t2pmhc and of the respective competitor, separately for seen
 and unseen peptides, and both methods are scored on exactly that shared subset. The number
 of peptides therefore differs between comparisons and is reported per comparison. AUCs are

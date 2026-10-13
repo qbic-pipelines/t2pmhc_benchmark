@@ -69,23 +69,8 @@ and unseen peptides, and both methods are scored on exactly that shared subset. 
 of peptides therefore differs between comparisons and is reported per comparison. AUCs are
 comparable between t2pmhc and a given competitor, but not between two competitors.
 
-### Difference from the peptide-grouped cross-validation used previously
-
-| | Peptide-grouped cross-validation (previous) | Per-peptide evaluation (current) |
-|---|---|---|
-| Unit of evaluation | one CV fold (many peptides pooled) | one peptide |
-| Metric | AUC pooled over all pairs in the fold | AUC computed within each peptide, then averaged across peptides |
-| Reported spread | variability across folds | standard deviation across peptides, plus per-peptide bootstrap 95% CI |
-| Influence of peptide frequency | abundant peptides dominate the pooled metric | every peptide contributes equally |
-| Cross-peptide ranking signal | a model can score well by separating easy peptides from hard ones, without ranking TCRs correctly within a peptide | removed: only within-peptide TCR ranking is scored |
-| Model comparison | fold-level comparison | paired per-peptide Wilcoxon signed-rank test with Holm-Bonferroni correction and rank-biserial effect size |
-| Purpose | model selection and hyperparameter search during development | benchmarking against competing methods |
-
-The two are complementary: peptide-grouped cross-validation remains the routine used for
-hyperparameter search and ablations on the training split (branches
-`hyperparameter_search`, `pae_ablation_experiment`, `angstrom_threshold_experiment`),
-while per-peptide evaluation is used for all reported benchmark results, because the
-central claim of the paper is made at peptide-level resolution.
+Pooled AUCs over all TCR-pMHC pairs of a dataset are computed alongside the per-peptide
+values and are reported in the supplementary material of the publication.
 
 ## Reproducing the publication figures
 

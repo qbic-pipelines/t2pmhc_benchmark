@@ -43,6 +43,50 @@ nextflow run qbic-pipelines/t2pmhc_benchmark \
    --outdir <OUTDIR>
 ```
 
+## Evaluation protocol
+
+The model implementation and the command-line tool are maintained in the main package,
+[qbic-pipelines/t2pmhc](https://github.com/qbic-pipelines/t2pmhc).
+
+Model performance is reported as the mean per-peptide AUC, not as a single pooled AUC over
+all test pairs:
+
+1. the test set is grouped by peptide;
+2. an AUC is computed within each peptide group, over that peptide's positives and its
+   assigned negatives;
+3. the per-peptide AUCs are averaged, and the standard deviation across peptides is
+   reported alongside the mean;
+4. a 95% confidence interval per peptide is obtained by bootstrap resampling stratified
+   by binder status;
+5. t2pmhc is compared with each competitor by a two-sided Wilcoxon signed-rank test on the
+   shared per-peptide AUC pairs (exact null distribution for fewer than 15 peptides),
+   with Holm-Bonferroni correction applied per dataset and split, and matched-pairs
+   rank-biserial correlation as the effect size.
+
+Leakage removal is applied per competitor. Each pairwise comparison runs on the intersection
+of the leakage-free subsets of t2pmhc and of the respective competitor, separately for seen
+and unseen peptides, and both methods are scored on exactly that shared subset. The number
+of peptides therefore differs between comparisons and is reported per comparison. AUCs are
+comparable between t2pmhc and a given competitor, but not between two competitors.
+
+### Difference from the peptide-grouped cross-validation used previously
+
+| | Peptide-grouped cross-validation (previous) | Per-peptide evaluation (current) |
+|---|---|---|
+| Unit of evaluation | one CV fold (many peptides pooled) | one peptide |
+| Metric | AUC pooled over all pairs in the fold | AUC computed within each peptide, then averaged across peptides |
+| Reported spread | variability across folds | standard deviation across peptides, plus per-peptide bootstrap 95% CI |
+| Influence of peptide frequency | abundant peptides dominate the pooled metric | every peptide contributes equally |
+| Cross-peptide ranking signal | a model can score well by separating easy peptides from hard ones, without ranking TCRs correctly within a peptide | removed: only within-peptide TCR ranking is scored |
+| Model comparison | fold-level comparison | paired per-peptide Wilcoxon signed-rank test with Holm-Bonferroni correction and rank-biserial effect size |
+| Purpose | model selection and hyperparameter search during development | benchmarking against competing methods |
+
+The two are complementary: peptide-grouped cross-validation remains the routine used for
+hyperparameter search and ablations on the training split (branches
+`hyperparameter_search`, `pae_ablation_experiment`, `angstrom_threshold_experiment`),
+while per-peptide evaluation is used for all reported benchmark results, because the
+central claim of the paper is made at peptide-level resolution.
+
 ## Reproducing the publication figures
 
 The `publication/` directory regenerates every manuscript figure from stored prediction tables,

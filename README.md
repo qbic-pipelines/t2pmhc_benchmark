@@ -51,13 +51,13 @@ The model implementation and the command-line tool are maintained in the main pa
 Model performance is reported as the mean per-peptide AUC, not as a single pooled AUC over
 all test pairs:
 
-1. the test set is grouped by peptide;
+1. the test set is grouped by peptide
 2. an AUC is computed within each peptide group, over that peptide's positives and its
-   assigned negatives;
+   assigned negatives
 3. the per-peptide AUCs are averaged, and the standard deviation across peptides is
-   reported alongside the mean;
+   reported alongside the mean
 4. a 95% confidence interval per peptide is obtained by bootstrap resampling stratified
-   by binder status;
+   by binder status
 5. t2pmhc is compared with each competitor by a two-sided Wilcoxon signed-rank test on the
    shared per-peptide AUC pairs (exact null distribution for fewer than 15 peptides),
    with Holm-Bonferroni correction applied per dataset and split, and matched-pairs

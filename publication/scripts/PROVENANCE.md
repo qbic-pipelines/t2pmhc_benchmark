@@ -11,8 +11,8 @@ outputs (raw, un-slimmed).
 
 | Script | Pipeline | Pin | Original run (dir / date) |
 |---|---|---|---|
-| `run_tcrpmhcbinding.sh` | `github.com/mapo9/tcrpmhcbinding` | `-r b58c28c` | `new_benchmark/tcrpmhcbinding_runs/2026-06-22_t2pmhc-bench_no-tcren_panpep_out` |
-| `run_tcrpmhcbinding_tcren.sh` | `github.com/mapo9/tcrpmhcbinding` | `-r b58c28c` | `new_benchmark/tcrpmhcbinding_runs/2026-06-16_t2pmhc-bench_tcren-only_out` |
+| `run_tcrpmhcbinding.sh` | `github.com/mapo9/tcrpmhcbinding` | `-r v0.1.1` | `new_benchmark/tcrpmhcbinding_runs/2026-06-22_t2pmhc-bench_no-tcren_panpep_out` |
+| `run_tcrpmhcbinding_tcren.sh` | `github.com/mapo9/tcrpmhcbinding` | `-r v0.1.1` | `new_benchmark/tcrpmhcbinding_runs/2026-06-16_t2pmhc-bench_tcren-only_out` |
 | `run_mpredpan.sh` | `github.com/qbic-pipelines/t2pmhc_benchmark` | `-r 1.0.0` | `new_benchmark/run_mpredpan_full/2026-06-17_mpredpan_out` |
 | `run_panpep.sh` | `ghcr.io/qbic-pipelines/panpep:b44ffb1` (container) | image digest tag | `rev2_p1_panpep/panpep_results/` |
 
@@ -29,6 +29,11 @@ outputs (raw, un-slimmed).
 | `training_overview/` | `pos_training.tsv`, `species_lookup.tsv` | static, trimmed from the tcrpHLA training set + curated DB (Fig 2 inputs — see note) |
 
 ## Notes
+- `tcrpmhcbinding` v0.1.1 is a maintenance release of the configuration used for the original
+  runs: it pins `tcr-pmhc-analyzer` 0.2.1, the version that produced `analyzer/` and
+  `analyzer_tcren/`. (The commit originally pinned here, `b58c28c`, still referenced 0.1.1.)
+  Its only other differences from `b58c28c` are the t2pmhc container (1.0.2 → 1.1.0) and a
+  whitespace fix in the MixTCRpred container reference.
 - PanPep and the newer sequence model (TULIP-TCR) enter via `--custom_model_name panpep` /
   `--models …,tulip-tcr`. PanPep's `_panpep.tsv` outputs are supplied to the main run as the
   custom model (`--custom_model_training panpep_meta_dataset.csv`).

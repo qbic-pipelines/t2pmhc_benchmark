@@ -5,7 +5,7 @@
 
 DATE=$(date +%Y-%m-%d)
 
-nextflow run mapo9/tcrpmhcbinding -r b58c28c \
+nextflow run mapo9/tcrpmhcbinding -r v0.1.1 \
     -profile docker \
     -c conf.conf \
     --input samplesheet.csv \

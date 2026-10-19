@@ -124,8 +124,8 @@ coordinate; see `publication/scripts/PROVENANCE.md` for run details):
 
 | Script | Produces (`data/` subdir) | Pipeline (pin) |
 |---|---|---|
-| `run_tcrpmhcbinding.sh` | `analyzer/`, `tcrdock_pae/` | `mapo9/tcrpmhcbinding` (`b58c28c`) |
-| `run_tcrpmhcbinding_tcren.sh` | `analyzer_tcren/` | `mapo9/tcrpmhcbinding` (`b58c28c`) |
+| `run_tcrpmhcbinding.sh` | `analyzer/`, `tcrdock_pae/` | `mapo9/tcrpmhcbinding` (`v0.1.1`) |
+| `run_tcrpmhcbinding_tcren.sh` | `analyzer_tcren/` | `mapo9/tcrpmhcbinding` (`v0.1.1`) |
 | `run_mpredpan.sh` | `mixtcrpred_pan/` | `qbic-pipelines/t2pmhc_benchmark` (`1.0.0`) |
 | `run_panpep.sh` | PanPep predictions | `ghcr.io/qbic-pipelines/panpep:b44ffb1` |
 
@@ -231,7 +231,7 @@ cd tcren-ms && git checkout b85f19a54ac38c7538bff6c2eba1c896ce1be5be
 
 As run for this benchmark, the conversion and TCRen scoring are executed by
 `publication/scripts/run_tcrpmhcbinding_tcren.sh` (via the pinned pipeline
-`mapo9/tcrpmhcbinding@b58c28c` under the Docker profile); the score inversion is
+`mapo9/tcrpmhcbinding@v0.1.1` under the Docker profile); the score inversion is
 applied in `publication/notebooks/figure5_benchmark.ipynb`.
 
 ### PanPep
